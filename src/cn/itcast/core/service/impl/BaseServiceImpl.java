@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import cn.itcast.core.dao.BaseDao;
+import cn.itcast.core.page.PageResult;
 import cn.itcast.core.service.BaseService;
 import cn.itcast.core.util.QueryHelper;
 
@@ -50,4 +51,9 @@ public class BaseServiceImpl<T> implements BaseService<T>{
 	public List<T> findObjects(QueryHelper queryHelper) {
 		return baseDao.findObjects(queryHelper);
 	}
+	@Override
+	public PageResult findObjects(QueryHelper queryHelper, int pageNo, int pageSize) {
+		return baseDao.findObjects(queryHelper,pageNo,pageSize);
+	}
+	
 }

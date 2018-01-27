@@ -12,6 +12,7 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import cn.itcast.core.dao.BaseDao;
+import cn.itcast.core.page.PageResult;
 import cn.itcast.core.util.QueryHelper;
 
 @Repository("baseDao")
@@ -80,6 +81,30 @@ public abstract class BaseDaoImpl<T> extends HibernateDaoSupport implements Base
 	            }
 	        }
 	      return query.list();
+	}
+	
+	public PageResult findObjects(QueryHelper queryHelper, int pageNo, int pageSize){
+		 Query query = currentSession().createQuery(queryHelper.getQueryListHql()); 
+		 List<Object> parameters = queryHelper.getParameters() ;
+		 if(parameters != null){
+	            for(int i = 0; i < parameters.size(); i++){
+	                query.setParameter(i, parameters.get(i));
+	            }
+	        }
+		 if(pageNo<1) pageNo=0;
+		 query.setFirstResult((pageNo-1)*pageSize);
+		 query.setMaxResults(pageSize);
+	     List list = query.list();
+		 Query queryCount = currentSession().createQuery(queryHelper.getQueryCountHql()); 
+		 if(parameters != null){
+	            for(int i = 0; i < parameters.size(); i++){
+	            	queryCount.setParameter(i, parameters.get(i));
+	            }
+	        }
+		 long totalCount = (long) queryCount.uniqueResult();
+		
+		 return new PageResult(totalCount, pageNo, pageSize, list);
+	     
 	}
 	
 

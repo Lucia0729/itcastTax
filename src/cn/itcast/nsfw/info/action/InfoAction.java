@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +18,7 @@ import com.opensymphony.xwork2.ActionContext;
 import cn.itcast.core.action.BaseAction;
 import cn.itcast.core.exception.ServiceException;
 import cn.itcast.core.exception.SysException;
+import cn.itcast.core.page.PageResult;
 import cn.itcast.core.util.QueryHelper;
 import cn.itcast.nsfw.info.entity.Info;
 import cn.itcast.nsfw.info.service.InfoService;
@@ -31,6 +31,11 @@ public class InfoAction extends BaseAction {
 	private static final long serialVersionUID = 1L;
 	@Resource
 	private InfoService infoService;
+	
+	private PageResult pageResult;
+	private int pageSize;
+	private int pageNo;
+	
 	private List<Info> infoList;
 	private Info info;
 	private String strTitle;
@@ -51,8 +56,8 @@ public class InfoAction extends BaseAction {
 			}
 			queryHelper.addOrderByProperty(" i.createTime ", QueryHelper.ORDER_BY_DESC);
 		}
-		
-		infoList = infoService.findObjects(queryHelper);
+		pageResult = infoService.findObjects(queryHelper,getPageNo(),getPageSize());
+//		infoList = infoService.findObjects(queryHelper);
 		return "listUI";
 	}
 
@@ -171,6 +176,32 @@ public class InfoAction extends BaseAction {
 
 	public void setStrTitle(String strTitle) {
 		this.strTitle = strTitle;
+	}
+
+	public PageResult getPageResult() {
+		return pageResult;
+	}
+
+	public void setPageResult(PageResult pageResult) {
+		this.pageResult = pageResult;
+	}
+
+	public int getPageSize() {
+		if(pageSize==0) pageSize=3;
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public int getPageNo() {
+		if(pageNo==0) pageNo=1;
+		return pageNo;
+	}
+
+	public void setPageNo(int pageNo) {
+		this.pageNo = pageNo;
 	}
 	
 }

@@ -27,6 +27,7 @@
                     dataType:"json",//返回数据类型
                     success: function(data){
                         //2.1、将用户列表设置到被投诉人下拉框中
+                        console.log(data);
                         if(data != null && data != "" && data != undefined){
                             if("success" == data.msg){
                                 var toCompName = $("#toCompName");

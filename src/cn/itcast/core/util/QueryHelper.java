@@ -42,6 +42,11 @@ public class QueryHelper {
 	public String getQueryListHql(){
 		return fromClause + whereClause + orderByClause;
 	}
+	
+	public String getQueryCountHql(){
+		return " SELECT COUNT(*) "+fromClause + whereClause;
+	}
+	
 	public List<Object> getParameters(){
 		return parameters;
 		

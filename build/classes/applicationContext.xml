@@ -51,6 +51,7 @@
 				<value>cn.itcast.nsfw.user.entity</value>
 				<value>cn.itcast.nsfw.role.entity</value>
 				<value>cn.itcast.nsfw.info.entity</value>
+				<value>cn.itcast.nsfw.complain.entity</value>
 			</list>
 		</property>
 	</bean>

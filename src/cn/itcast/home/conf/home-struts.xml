@@ -8,7 +8,15 @@
 		<action name="home_*" class="sys.homeAction" method="{1}">
 			<result name="{1}">/WEB-INF/jsp/home/{1}.jsp</result>
 			<result name="home">/WEB-INF/jsp/home/home.jsp</result>
+			<result type="json">
+				<param name="root">result_map</param>
+			</result>
 	</action>
+	<!-- <action name="home_getUserJson2" class="sys.homeAction" method="getUserJson2">
+			<result type="json">
+			<param name="root">result_map</param>
+			</result>
+	</action> -->
 	</package>
 
 

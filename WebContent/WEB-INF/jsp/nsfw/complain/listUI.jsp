@@ -3,7 +3,7 @@
 <head>
     <%@include file="/common/header.jsp"%>
     <title>投诉受理管理</title>
-    <script type="text/javascript" src="${basePath }js/datepicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="${basePath }js/My97DatePicker/WdatePicker.js"></script>
     <script type="text/javascript">
     var list_url = "${basePath}nsfw/complain_listUI.action";
     //搜索
@@ -39,7 +39,7 @@
                         投诉时间：<s:textfield id="startTime" name="startTime" cssClass="s_text"  cssStyle="width:160px;"
                          readonly="true" onfocus="WdatePicker({'skin':'whyGreen','dateFmt':'yyyy-MM-dd HH:mm'});"/>
                               - 
-                             <s:textfield id="endTime" name="endTime" cssClass="s_text"  cssStyle="width:160px;"
+                              <s:textfield id="endTime" name="endTime" cssClass="s_text"  cssStyle="width:160px;"
                               readonly="true" onfocus="WdatePicker({'skin':'whyGreen','dateFmt':'yyyy-MM-dd HH:mm'});"/>
                     </li>
                     <li>
