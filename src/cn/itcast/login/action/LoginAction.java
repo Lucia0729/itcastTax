@@ -18,6 +18,7 @@ import org.apache.struts2.ServletActionContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import cn.itcast.core.constant.Constant;
@@ -44,13 +45,16 @@ public class LoginAction extends ActionSupport {
 			if(list!=null&&list.size()>0){
 				User user = list.get(0);
 				HttpSession session = ServletActionContext.getRequest().getSession();
-				if(Constant.jedis.get(user.getId())!=null&&!session.getId().equals(Constant.jedis.get(user.getId()))){
+				
+				if(session.getAttribute(user.getId())!=null&&!session.getId().equals(session.getAttribute(user.getId()))){
 					tologout(user);
 				}
-				Constant.jedis.set(user.getId(),session.getId());
 				user.setUserRoles(userService.getUserRolesByUserId(user.getId()));
+				
+				Constant.USER_SESSION.put(user.getId(), session);
+//				Constant.SESSIONID_USER.put(user.getId(), session.getId());
+				session.setAttribute(user.getId(),session.getId());
 				session.setAttribute(Constant.USER, user);
-				Constant.jedis.set("userRole".getBytes(),SerializeUtil.serialize(user.getUserRoles()));
 				
 				log.info("用户名成为"+user.getName()+"的登录了系统");
 				return "home";
@@ -70,17 +74,16 @@ public class LoginAction extends ActionSupport {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		HttpSession session = request.getSession();
 		session.removeAttribute(Constant.USER);
-		Constant.jedis.del(user.getId());
-		try {
-			HttpServletResponse response = ServletActionContext.getResponse();
-			response.setContentType("text/html");
-			ServletOutputStream outputStream = response.getOutputStream();
-			outputStream.write("您已在其他地点登录".getBytes());
-			outputStream.close();
-			response.sendRedirect(request.getContextPath()+"/sys/toLoginUI.action");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Constant.USER_SESSION.remove(user.getId());
+//		try {
+//			HttpServletResponse response = ServletActionContext.getResponse();
+//			response.setContentType("text/html");
+//			ServletOutputStream outputStream = response.getOutputStream();
+//			outputStream.write("您已在其他地点登录".getBytes("utf-8"));
+//			outputStream.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public String logout(){
@@ -91,7 +94,7 @@ public class LoginAction extends ActionSupport {
 		Iterator<String> iterator = set.iterator();
 		while(iterator.hasNext())
 			log.info(  iterator.next());*/
-		Constant.jedis.del(user.getId());
+		session.removeAttribute(user.getId());
 		
 		session.removeAttribute(Constant.USER);
 		return toLoginUI();

@@ -11,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -31,10 +32,11 @@ public class LoginFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		String uri = httpRequest.getRequestURI();
 		if(!uri.contains("/sys/login_")){
-			User user = (User) httpRequest.getSession().getAttribute(Constant.USER);
+			HttpSession session = httpRequest.getSession();
+			User user = (User) session.getAttribute(Constant.USER);
 			if(user!=null){
 				PermissionCheck pc = null;
-				WebApplicationContext application = WebApplicationContextUtils.getWebApplicationContext(httpRequest.getSession().getServletContext());
+				WebApplicationContext application = WebApplicationContextUtils.getWebApplicationContext(session.getServletContext());
 				pc= (PermissionCheck)application.getBean("permissionCheck");
 				if(pc.isAccessible(user,"nsfw")){
 					filterChain.doFilter(request, response);

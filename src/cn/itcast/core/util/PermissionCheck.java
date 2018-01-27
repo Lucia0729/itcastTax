@@ -3,6 +3,7 @@ package cn.itcast.core.util;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Component;
 
@@ -19,9 +20,8 @@ public class PermissionCheck {
 	private UserService userService;
 
 	public boolean isAccessible(User user, String code) {
-		if (Constant.jedis.get("userRole".getBytes()) != null) {
-			List<UserRole> userRoles = (List<UserRole>) SerializeUtil
-					.unserialize(Constant.jedis.get("userRole".getBytes()));
+		if (user.getUserRoles() != null) {
+			List<UserRole> userRoles = user.getUserRoles();
 			if (userRoles == null)
 				userRoles = userService.getUserRolesByUserId(user.getId());
 			if (null != userRoles && userRoles.size() > 0) {
