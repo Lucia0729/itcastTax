@@ -3,6 +3,8 @@ package cn.itcast.login.action;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -29,6 +31,10 @@ import cn.itcast.nsfw.user.service.UserService;
 @Controller("sys.loginAction")
 @Scope(value = "prototype")
 public class LoginAction extends ActionSupport {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Log log = LogFactory.getLog(getClass());
 	private User user;
 	private String loginResult;
@@ -45,17 +51,17 @@ public class LoginAction extends ActionSupport {
 			if(list!=null&&list.size()>0){
 				User user = list.get(0);
 				HttpSession session = ServletActionContext.getRequest().getSession();
-				
-				if(session.getAttribute(user.getId())!=null&&!session.getId().equals(session.getAttribute(user.getId()))){
-					tologout(user);
+				System.out.println(session.getAttribute(user.getId()));
+				if(Constant.USER_SESSION.get(user.getId())!=null&&!session.equals(Constant.USER_SESSION.get(user.getId()))){
+					userLoginHandle(user); 
 				}
 				user.setUserRoles(userService.getUserRolesByUserId(user.getId()));
 				
 				Constant.USER_SESSION.put(user.getId(), session);
-//				Constant.SESSIONID_USER.put(user.getId(), session.getId());
+				Constant.SESSIONID_USER.put(session.getId(), user.getAccount());
 				session.setAttribute(user.getId(),session.getId());
 				session.setAttribute(Constant.USER, user);
-				
+				session.setAttribute("isLogin", "false");
 				log.info("用户名成为"+user.getName()+"的登录了系统");
 				return "home";
 			}else{
@@ -70,20 +76,21 @@ public class LoginAction extends ActionSupport {
 		return toLoginUI();
 	}
 	
-	private void tologout(User user) {
+	private void userLoginHandle(User user) {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		HttpSession session = request.getSession();
 		session.removeAttribute(Constant.USER);
+		HttpSession httpSession = Constant.USER_SESSION.get(user.getId());
+		httpSession.setMaxInactiveInterval(0);
 		Constant.USER_SESSION.remove(user.getId());
-//		try {
-//			HttpServletResponse response = ServletActionContext.getResponse();
-//			response.setContentType("text/html");
-//			ServletOutputStream outputStream = response.getOutputStream();
-//			outputStream.write("您已在其他地点登录".getBytes("utf-8"));
-//			outputStream.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		Map<String,String> map = Constant.SESSIONID_USER;
+		if(map.containsValue(user.getAccount())){
+			 for (Entry<String, String> entry : map.entrySet()) {  
+		            if(user.getAccount().equals(entry.getValue())){  
+		            	Constant.SESSIONID_USER.remove(entry.getKey());
+		            }  
+		        }  
+		}
 	}
 
 	public String logout(){

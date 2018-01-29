@@ -5,7 +5,11 @@ String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 request.setAttribute("ctx", path);
 %>
- 
+<%
+String isLogin = (String) request.getSession().getAttribute("isLogin");  
+String account = (String) request.getSession().getAttribute("user.account"); 
+String password = (String) request.getSession().getAttribute("user.password"); 
+%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -13,7 +17,7 @@ request.setAttribute("ctx", path);
 <title>登录</title>
 <link href="${ctx}/css/login.css" type="text/css" rel="stylesheet">
 <script type="text/javascript">
- 
+
 function logins(){
     document.forms[0].submit();
 }
@@ -151,6 +155,21 @@ html { overflow-y: hidden;  }
     <div class="foot">版权所有 | 国税局  2014年</div>
 </div>
 </div>
+<s:hidden id="islogin" name="islogin" value=""></s:hidden>
 </s:form>
 </body>
+<script type="text/javascript">
+var login = <%=isLogin%>;
+if(login){
+	var r = confirm("您的账号已在其他地方登录，是否登录？");
+	if (r==true)
+    {
+		document.getElementById("islogin").value = "true";
+		document.getElementById("account").value = '<%=account%>';
+		document.getElementById("password").value = '<%=password%>';
+		document.forms[0].submit();
+    }
+ 	
+}
+</script>
 </html>
